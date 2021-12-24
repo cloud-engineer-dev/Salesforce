@@ -7,7 +7,7 @@ private class BatchClassExampleTest {
         {
             Account acc = new Account();
             acc.Name ='Name'+i;
-            lstLead.add(acc);
+            lstAccount.add(acc);
         }
         
         insert lstAccount;
