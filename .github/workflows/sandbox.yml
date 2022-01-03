@@ -3,7 +3,7 @@ name: CI
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -16,7 +16,7 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@main
 
     # Runs a single command using the runners shell
     - name: 'Build and Deploy'
@@ -25,17 +25,14 @@ jobs:
         mkdir sfdx-cli
         tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
         ./sfdx-cli/install
- # Runs a set of commands using the runners shell
+    # Runs a set of commands using the runners shell
     - name: 'Decrypt file'
       run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{secrets.DECRYPTION_KEY}} -iv ${{secrets.DECRYPTION_IV}}
     - name: 'Authorize'
       run: |
-        echo username value ${{ secrets.USERNAME }}
+        echo username value ${{ secrets.USERNAME_STAGING }}
         sfdx force:auth:jwt:grant --clientid=${{ secrets.CONSUMER_KEY }} --username=${{ secrets.USERNAME }} --jwtkeyfile server.key --setdefaultdevhubusername --setalias=hub-org
     - name: 'Convert Metadata'
       run: sfdx force:source:convert --rootdir=force-app --outputdir=convert
     - name: 'Run Test on Metadata'
-      run: |
-        deployId="$(sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org --wait 0 --json \
-        | tee /dev/stderr | node -pe 'JSON.parse(fs.readFileSync(0, "utf8")).result.id')"
-        sfdx force:mdapi:deploy:report -u hub-org -i "${deployId}" --wait 60
+      run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests  -u hub-org
