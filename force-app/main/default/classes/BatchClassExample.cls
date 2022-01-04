@@ -5,7 +5,7 @@ public with sharing class BatchClassExample implements Database.Batchable<sObjec
 
     public Database.QueryLocator start(Database.BatchableContext BC) {
         String query = 'SELECT Id From Account LIMIT 10';
-        System.debug("Came here");
+        System.debug('Came here');
         return Database.getQueryLocator(query);
     }
 
