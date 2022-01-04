@@ -25,6 +25,10 @@ jobs:
         mkdir sfdx-cli
         tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
         ./sfdx-cli/install
+
+    - name: 'Install git delta'
+      run: sfdx plugins:install sfdx-git-delta
+
     # Runs a set of commands using the runners shell
     - name: 'Decrypt file'
       run: openssl enc -nosalt -aes-256-cbc -d -in assets/server.key.enc -out server.key -base64 -K ${{secrets.DECRYPTION_KEY}} -iv ${{secrets.DECRYPTION_IV}}
@@ -40,10 +44,6 @@ jobs:
 
     # - name: 'Run Test on Metadata'
     #   run: sfdx force:source:deploy --checkonly --sourcepath=force-app --targetusername=hub-org --testlevel=RunLocalTests
-
-
-      - name: 'Install git delta'
-        run: sfdx plugins:install sfdx-git-delta
 
       - name: 'check delta and create packages'
         run: sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output .
