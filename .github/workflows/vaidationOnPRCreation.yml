@@ -36,5 +36,22 @@ jobs:
     #   run: sfdx force:source:convert --rootdir=force-app --outputdir=convert
     # - name: 'Run Test on Metadata'
     #   run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
-    - name: 'Run Test on Metadata'
-      run: sfdx force:source:deploy --checkonly --sourcepath=force-app --targetusername=hub-org --testlevel=RunLocalTests
+
+
+    # - name: 'Run Test on Metadata'
+    #   run: sfdx force:source:deploy --checkonly --sourcepath=force-app --targetusername=hub-org --testlevel=RunLocalTests
+
+
+      - name: 'Install git delta'
+        run: sfdx plugins:install sfdx-git-delta
+
+      - name: 'check delta and create packages'
+        run: sfdx sgd:source:delta --to "HEAD" --from "HEAD^" --output .
+
+      - name: 'Validation of the package'
+        run: |
+          echo "--- package.xml generated with added and modified metadata ---"
+          cat package/package.xml
+          echo
+          echo "---- Deploying added and modified metadata ----"
+          sfdx force:source:deploy --checkonly -x package/package.xml
