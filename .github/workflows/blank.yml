@@ -30,7 +30,7 @@ jobs:
         sudo npm install sfdx-git-delta@latest -g
         git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
         git fetch --all
-        git checkout -b main
+        git checkout -b staging
         git --no-pager diff --name-status main origin/staging
         sgd --to main --from origin/staging --repo . --output .
         cat package/package.xml
