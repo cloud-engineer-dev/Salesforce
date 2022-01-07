@@ -45,7 +45,11 @@ jobs:
       run: sfdx force:source:convert --manifest=package/package.xml --outputdir=convert
       # run: sfdx force:source:convert --rootdir=force-app --outputdir=convert
     - name: 'Run Test on Metadata'
-      run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
+      run: |
+        deployId="$(sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org --wait 0 --json \
+        | tee /dev/stderr | node -pe 'JSON.parse(fs.readFileSync(0, "utf8")).result.id')"
+        sfdx force:mdapi:deploy:report -u hub-org -i "${deployId}" --wait 60
+      # run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -u hub-org
       # run: sfdx force:mdapi:deploy --deploydir=convert --testlevel=RunLocalTests --checkonly -w30
     # - name: 'Run Test on Metadata'
     #   run: sfdx force:source:deploy --sourcepath=force-app --targetusername=hub-org --testlevel=RunLocalTests
