@@ -9,7 +9,7 @@ private class BatchClassExampleTest {
             acc.Name ='Name'+i;
             lstAccount.add(acc);
         }
-        
+        // Sample comment
         insert lstAccount;
 	}
 
