@@ -26,7 +26,7 @@ jobs:
         tar xJf sfdx-linux-amd64.tar.xz -C sfdx-cli --strip-components 1
         ./sfdx-cli/install
     - name: "Install SDG and Create Delta"
-        run: |
+      run: |
         sudo npm install sfdx-git-delta@latest -g
         git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
         git fetch --all
