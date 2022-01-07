@@ -12,6 +12,7 @@ private class BatchClassExampleTest {
         
         insert lstAccount;
         //1
+        //2
 	}
 
 	@isTest static void testMethod1() {
